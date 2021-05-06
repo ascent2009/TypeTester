@@ -1,94 +1,102 @@
 body {
-    box-sizing: border-box;
-    margin: 0;
-    font-family: "Proxima Nova",sans-serif;
-    background: #55c5ff;
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Proxima Nova", sans-serif;
+  background: #55c5ff;
 }
 
 .container {
-    margin: auto;
-    display: flex;
-    height: 80vh;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+  margin: auto;
+  display: flex;
+  min-height: 80vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .title {
-    font-size: 40px;
-    font-style: italic;
-    color: whitesmoke;
-    text-align: center;
-    /* margin-top: 50px; */
+  font-size: 40px;
+  font-style: italic;
+  color: whitesmoke;
+  text-align: center;
+  /* margin-top: 50px; */
 }
 
 @keyframes opacityFullNone {
-    from {
+  from {
     opacity: 0;
-    }
-    to {
+  }
+  to {
     opacity: 1;
-    }
-} 
+  }
+}
 
 .text {
-    width: 50%;    
-    list-style: none;
-    padding: 0;
-    animation: opacityFullNone 400ms ease;
-    opacity: 0;
+  width: 50%;
+  list-style: none;
+  padding: 0;
+  animation: opacityFullNone 400ms ease;
+  opacity: 0;
 }
 
 .show-text {
-    opacity: 1;
-    transition: 1s;
+  opacity: 1;
+  transition: 1s;
 }
 
 .button {
-    position: absolute;
-    width: 200px;
-    height: 100px;
-    font-weight: 600;
-    font-family: inherit;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 10px;
-    border: 1px solid grey;
-    outline: none;
-    top: 25%;
+  position: absolute;
+  width: 200px;
+  height: 100px;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid grey;
+  outline: none;
+  top: 25%;
 }
 
 .button:active {
-    padding-bottom: 2px;
+  padding-bottom: 2px;
 }
 
 button:last-child {
-    content: '';
-    width: 40px;
-    height: 40px;
-    background: url(./assets/refresh.svg) no-repeat transparent;
-    top: 34%;
-    right: 20%;
-    border: none;
-    outline: none;
+  content: "";
+  width: 40px;
+  height: 40px;
+  background: url(./assets/refresh.svg) no-repeat transparent;
+  top: 34%;
+  right: 20%;
+  border: none;
+  outline: none;
 }
 
 button:last-child:not(:active) {
-    transform: rotate(180deg);
-    transition: 1s;
+  transform: rotate(180deg);
+  transition: 1s;
 }
 
 .textarea {
-    display: flex;
-    justify-self: center;
-    width: 50%;
-    /* margin: auto; */
-    resize: none;
-    border-radius: 15px;
-    outline: none;
-    overflow: hidden;
-    font-family: inherit;
-    font-size: 16px;
-    overflow-wrap: break-word;
-    padding: 10px;
+  display: flex;
+  justify-self: center;
+  width: 50%;
+  /* margin: auto; */
+  resize: none;
+  border-radius: 15px;
+  outline: none;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 16px;
+  overflow-wrap: break-word;
+  padding: 10px;
+}
+
+.clock {
+  background: rgb(236, 235, 235);
+  width: 200px;
+  height: 100px;
+  border: 1px solid;
+  border-radius: 5px;
 }
