@@ -12,6 +12,9 @@ parag.className = "text";
 parag.innerHTML =
   "Вот вам яркий пример современных тенденций - семантический разбор внешних противодействий предполагает независимые способы реализации как самодостаточных, так и внешне зависимых концептуальных решений";
 
+const tools = document.createElement("div");
+tools.className = "tools-block";
+
 const clock = document.createElement("div");
 clock.className = "clock";
 
@@ -19,10 +22,17 @@ const typeSpeed = document.createElement("div");
 typeSpeed.className = "clock";
 typeSpeed.setAttribute("hidden", "true");
 
+const hintBlock = document.createElement("div");
+hintBlock.className = "hint-block";
+
+const hint = document.createElement("p");
+// hint.className = "hint";
+hint.setAttribute("hidden", "true");
+
 const btnStart = document.createElement("button");
 btnStart.className = "button";
 btnStart.setAttribute("type", "button");
-btnStart.innerText = "Начать тест";
+btnStart.setAttribute("title", "Начать тест");
 
 const btnUpdate = document.createElement("button");
 btnUpdate.className = "button";
@@ -40,14 +50,15 @@ input.setAttribute("hidden", "true");
 
 body.append(root);
 root.append(title);
-root.append(input);
 root.append(parag);
-root.append(btnStart);
-root.append(btnUpdate);
-parag.after(input);
-btnStart.after(input);
-root.append(clock);
-root.append(typeSpeed);
+root.append(hintBlock);
+hintBlock.append(hint);
+root.append(input);
+root.append(tools);
+tools.append(btnStart);
+tools.append(btnUpdate);
+tools.append(clock);
+tools.append(typeSpeed);
 
 // const url = "https://baconipsum.com/api/?type=meat-and-filler";
 const url = "https://fish-text.ru/get?&type=paragraph&number=1";
@@ -63,7 +74,12 @@ let timerRunning = false;
 
 // Запуск таймера с минутами, секундами, милисекундами
 function runTimer() {
-  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
+  let minWithZero = `0${timer[0]}`;
+  // let secWithZero = `0${timer[1]}`;
+  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]}`;
+  if (timer[0] < 10) {
+    currentTime = `${minWithZero} : ${timer[1]} : ${timer[2]}`;
+  }
   clock.innerHTML = currentTime;
   timer[3]++;
   timer[0] = Math.floor(timer[3] / 100 / 60);
@@ -79,13 +95,29 @@ function checkSpellText() {
   let textEntered = input.value;
   let originTextMatch = originText.substring(0, textEntered.length);
   if (textEntered === "") {
+    hint.setAttribute("hidden", "true");
     input.style.border = "";
   } else if (textEntered == originText) {
-    input.style.border = "#429890 4px solid";
+    input.classList.add("textarea-colored");
+    input.style.borderColor = "#429890"; // green
+    hint.removeAttribute("hidden");
+    hint.style.color = "#429890";
+    hint.style.fontWeight = "bold";
+    hint.innerHTML = "&#x1F44D; Отлично получилось!";
   } else if (textEntered == originTextMatch) {
-    input.style.border = "#0057fa  4px solid"; // blue
+    input.classList.add("textarea-colored");
+    input.style.borderColor = "#0057fa"; // blue
+    hint.removeAttribute("hidden");
+    hint.style.color = "#0057fa";
+    hint.style.fontWeight = "bold";
+    hint.innerHTML = "Пока все правильно...";
   } else {
-    input.style.border = "#E95D0F 4px solid"; // orange
+    input.classList.add("textarea-colored");
+    input.style.borderColor = "#E95D0F"; // orange
+    hint.removeAttribute("hidden");
+    hint.style.color = "#E95D0F";
+    hint.style.fontWeight = "bold";
+    hint.innerHTML = "Ой, какая-то ошибка... &#x1F914;";
   }
 }
 
@@ -105,14 +137,13 @@ function reset() {
   clearInterval(interval);
   interval = null;
   timer = [0, 0, 0, 0];
-
+  // clock.innerHTML = "00:00:00";
   let testTime = clock.innerHTML.replaceAll(":", ",").split(",");
-  let symbolsPerMinute = parag.textContent.length / (testTime[3] / 100 / 60);
-
+  let symbolsPerMinute = parag.textContent.length / (testTime[2] / 1000 / 60);
+  console.log(testTime[3]);
   typeSpeed.removeAttribute("hidden");
   typeSpeed.innerHTML = symbolsPerMinute.toString();
 
-  clock.innerHTML = "00:00:00";
   // btnStart.style.display = "block";
   // btnUpdate.setAttribute("hidden", "false");
 }
@@ -151,7 +182,7 @@ btnStart.addEventListener("click", (e) => {
     });
   setTimeout(() => parag.classList.add("show-text"), 500);
   if (parag) {
-    btnStart.style.display = "none";
+    // btnStart.style.display = "none";
     btnUpdate.removeAttribute("hidden");
   }
   input.removeAttribute("disabled");
