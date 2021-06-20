@@ -9,8 +9,7 @@ title.innerText = "Тренажер слепой печати";
 
 const parag = document.createElement("p");
 parag.className = "text";
-parag.innerHTML =
-  "Вот вам яркий пример современных тенденций - семантический разбор внешних противодействий предполагает независимые способы реализации как самодостаточных, так и внешне зависимых концептуальных решений";
+parag.innerHTML = "";
 
 const tools = document.createElement("div");
 tools.className = "tools-block";
@@ -46,7 +45,7 @@ input.setAttribute("wrap", "soft");
 input.setAttribute("rows", "8");
 input.setAttribute("placeholder", "Напечатайте текст как в примере...");
 input.setAttribute("contenteditable", "true");
-input.setAttribute("hidden", "true");
+input.setAttribute("disabled", "true");
 
 body.append(root);
 root.append(title);
@@ -62,6 +61,11 @@ tools.append(typeSpeed);
 
 // const url = "https://baconipsum.com/api/?type=meat-and-filler";
 const url = "https://fish-text.ru/get?&type=paragraph&number=1";
+const fetchText = async () => {
+  const text = await fetch(url);
+  const result = await text.json();
+  parag.innerHTML = result.text;
+};
 
 // Тестовый fetch для проверки получаемых данных
 // fetch(url)
@@ -76,9 +80,9 @@ let timerRunning = false;
 function runTimer() {
   let minWithZero = `0${timer[0]}`;
   // let secWithZero = `0${timer[1]}`;
-  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]}`;
+  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
   if (timer[0] < 10) {
-    currentTime = `${minWithZero} : ${timer[1]} : ${timer[2]}`;
+    currentTime = `${minWithZero} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
   }
   clock.innerHTML = currentTime;
   timer[3]++;
@@ -87,11 +91,14 @@ function runTimer() {
   timer[2] = Math.floor(timer[3] - timer[1] * 100 - timer[0] * 6000);
 }
 
-const originText = document.querySelector(".text").innerHTML;
-console.log("originText: ", originText);
-
 // функция проверки правильности вводимого текста
 function checkSpellText() {
+  // const originT = () => {
+  //   fetchText();
+  //   return parag.innerHTML;
+  // };
+  const originText = parag.innerHTML;
+  // console.log("originText: ", originText);
   let textEntered = input.value;
   let originTextMatch = originText.substring(0, textEntered.length);
   if (textEntered === "") {
@@ -132,17 +139,22 @@ function start() {
   }
 }
 
+// Подсчет количества набранных символов в поле ввода
+const charCount = () => {
+  let testTime = clock.innerHTML.replaceAll(":", ",").split(",");
+  let symbolsPerMinute = Math.round(
+    input.value.length / (parseInt(testTime[3]) / 100 / 60)
+  );
+  typeSpeed.removeAttribute("hidden");
+  typeSpeed.innerHTML = `${symbolsPerMinute.toString()} зн/мин`;
+};
+
 // Перезагрузка таймера
 function reset() {
   clearInterval(interval);
   interval = null;
   timer = [0, 0, 0, 0];
-  // clock.innerHTML = "00:00:00";
-  let testTime = clock.innerHTML.replaceAll(":", ",").split(",");
-  let symbolsPerMinute = parag.textContent.length / (testTime[2] / 1000 / 60);
-  console.log(testTime[3]);
-  typeSpeed.removeAttribute("hidden");
-  typeSpeed.innerHTML = symbolsPerMinute.toString();
+  clock.innerHTML = "00:00:00";
 
   // btnStart.style.display = "block";
   // btnUpdate.setAttribute("hidden", "false");
@@ -173,34 +185,25 @@ function reset() {
 // Вывод первого текста по нажатию на кнопку "Начать тест"
 btnStart.addEventListener("click", (e) => {
   e.preventDefault();
-  fetch(url)
-    .then((res) => res.json())
-    .then((result) => {
-      let html = "";
-      html = `${result.text}`;
-      parag.innerHTML = html;
-    });
+  // parag.innerHTML = `${fetchText()}`;
+  fetchText();
   setTimeout(() => parag.classList.add("show-text"), 500);
   if (parag) {
     // btnStart.style.display = "none";
     btnUpdate.removeAttribute("hidden");
   }
   input.removeAttribute("disabled");
+  btnStart.setAttribute("disabled", "true");
 });
 
 // Вывод нового фрагмента по нажатию на кнопку обновления текста
 btnUpdate.addEventListener("click", (e) => {
   e.preventDefault();
-  fetch(url)
-    .then((res) => res.json())
-    .then((result) => {
-      let html = "";
-      html = `${result.text}`;
-      setTimeout(() => {
-        parag.innerHTML = html;
-      }, 500);
-      setTimeout(() => parag.classList.add("show-text"), 500);
-    });
+  setTimeout(() => {
+    fetchText();
+  }, 500);
+  setTimeout(() => parag.classList.add("show-text"), 500);
+
   parag.classList.remove("show-text");
   reset();
   input.value = "";
@@ -209,3 +212,4 @@ btnUpdate.addEventListener("click", (e) => {
 
 input.addEventListener("keypress", start, false);
 input.addEventListener("keyup", checkSpellText, false);
+input.addEventListener("keyup", charCount, false);
