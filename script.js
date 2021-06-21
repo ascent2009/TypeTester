@@ -25,7 +25,6 @@ const hintBlock = document.createElement("div");
 hintBlock.className = "hint-block";
 
 const hint = document.createElement("p");
-// hint.className = "hint";
 hint.setAttribute("hidden", "true");
 
 const btnStart = document.createElement("button");
@@ -39,12 +38,16 @@ btnUpdate.setAttribute("type", "button");
 btnUpdate.setAttribute("hidden", "false");
 btnUpdate.setAttribute("title", "Обновить текст и начать тест заново");
 
+const btnStop = document.createElement("button");
+btnStop.className = "button";
+btnStop.setAttribute("type", "button");
+btnStop.setAttribute("title", "Сбросить таймер");
+
 const input = document.createElement("textarea");
 input.className = "textarea";
 input.setAttribute("wrap", "soft");
 input.setAttribute("rows", "8");
 input.setAttribute("placeholder", "Напечатайте текст как в примере...");
-input.setAttribute("contenteditable", "true");
 input.setAttribute("disabled", "true");
 
 body.append(root);
@@ -56,49 +59,22 @@ root.append(input);
 root.append(tools);
 tools.append(btnStart);
 tools.append(btnUpdate);
+tools.append(btnStop);
 tools.append(clock);
 tools.append(typeSpeed);
 
-// const url = "https://baconipsum.com/api/?type=meat-and-filler";
 const url = "https://fish-text.ru/get?&type=paragraph&number=1";
+
+// запрос фрагмента текста на сервере
 const fetchText = async () => {
   const text = await fetch(url);
   const result = await text.json();
   parag.innerHTML = result.text;
 };
 
-// Тестовый fetch для проверки получаемых данных
-// fetch(url)
-//   .then((res) => res.json())
-//   .then((data) => console.log(data));
-
-let timer = [0, 0, 0, 0];
-let interval;
-let timerRunning = false;
-
-// Запуск таймера с минутами, секундами, милисекундами
-function runTimer() {
-  let minWithZero = `0${timer[0]}`;
-  // let secWithZero = `0${timer[1]}`;
-  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
-  if (timer[0] < 10) {
-    currentTime = `${minWithZero} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
-  }
-  clock.innerHTML = currentTime;
-  timer[3]++;
-  timer[0] = Math.floor(timer[3] / 100 / 60);
-  timer[1] = Math.floor(timer[3] / 100 - timer[0] * 60);
-  timer[2] = Math.floor(timer[3] - timer[1] * 100 - timer[0] * 6000);
-}
-
 // функция проверки правильности вводимого текста
 function checkSpellText() {
-  // const originT = () => {
-  //   fetchText();
-  //   return parag.innerHTML;
-  // };
   const originText = parag.innerHTML;
-  // console.log("originText: ", originText);
   let textEntered = input.value;
   let originTextMatch = originText.substring(0, textEntered.length);
   if (textEntered === "") {
@@ -128,11 +104,31 @@ function checkSpellText() {
   }
 }
 
+let timer = [0, 0, 0, 0];
+let interval;
+let timerRunning = false;
+
+// Запуск таймера с минутами, секундами, милисекундами
+function runTimer() {
+  let minWithZero = `0${timer[0]}`;
+  // let secWithZero = `0${timer[1]}`;
+  let currentTime = `${timer[0]} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
+  if (timer[0] < 10) {
+    currentTime = `${minWithZero} : ${timer[1]} : ${timer[2]} : ${timer[3]}`;
+  }
+  clock.innerHTML = currentTime;
+  timer[3]++;
+  timer[0] = Math.floor(timer[3] / 100 / 60);
+  timer[1] = Math.floor(timer[3] / 100 - timer[0] * 60);
+  timer[2] = Math.floor(timer[3] - timer[1] * 100 - timer[0] * 6000);
+}
+
 // Начало теста
 function start() {
   typeSpeed.setAttribute("hidden", "true");
 
   let textEnteredLength = input.value.length;
+  console.log("textEnteredLength: ", textEnteredLength);
   if (textEnteredLength === 0 && !timerRunning) {
     timerRunning = true;
     interval = setInterval(runTimer, 10);
@@ -153,43 +149,17 @@ const charCount = () => {
 function reset() {
   clearInterval(interval);
   interval = null;
+  timerRunning = false;
   timer = [0, 0, 0, 0];
   clock.innerHTML = "00:00:00";
-
-  // btnStart.style.display = "block";
-  // btnUpdate.setAttribute("hidden", "false");
 }
-
-// Отслеживание положения курсора
-// function getCaretPosition() {
-//   var x = 0;
-//   var y = 0;
-//   var sel = window.getSelection();
-//   if (sel.rangeCount) {
-//     var range = sel.getRangeAt(0).cloneRange();
-//     if (range.getClientRects()) {
-//       range.collapse(true);
-//       var rect = range.getClientRects()[0];
-//       if (rect) {
-//         y = rect.top;
-//         x = rect.left;
-//       }
-//     }
-//   }
-//   return {
-//     x: x,
-//     y: y,
-//   };
-// }
 
 // Вывод первого текста по нажатию на кнопку "Начать тест"
 btnStart.addEventListener("click", (e) => {
   e.preventDefault();
-  // parag.innerHTML = `${fetchText()}`;
   fetchText();
   setTimeout(() => parag.classList.add("show-text"), 500);
   if (parag) {
-    // btnStart.style.display = "none";
     btnUpdate.removeAttribute("hidden");
   }
   input.removeAttribute("disabled");
@@ -201,6 +171,7 @@ btnUpdate.addEventListener("click", (e) => {
   e.preventDefault();
   setTimeout(() => {
     fetchText();
+    hint.setAttribute("hidden", "true");
   }, 500);
   setTimeout(() => parag.classList.add("show-text"), 500);
 
@@ -208,6 +179,12 @@ btnUpdate.addEventListener("click", (e) => {
   reset();
   input.value = "";
   input.style.border = "";
+  typeSpeed.innerHTML = "";
+});
+
+btnStop.addEventListener("click", (e) => {
+  e.preventDefault();
+  reset();
 });
 
 input.addEventListener("keypress", start, false);

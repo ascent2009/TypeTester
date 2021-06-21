@@ -46,14 +46,11 @@ body {
   margin: auto;
 }
 
-/* .hint-block */
-
 .hint-block {
   width: fit-content;
   height: 30px;
   margin: auto;
   margin-bottom: 20px;
-  /* border: 1px solid grey; */
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -65,7 +62,7 @@ body {
 }
 
 .tools-block {
-  width: 40%;
+  width: 45%;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -75,11 +72,6 @@ body {
 .button {
   width: 40px;
   height: 40px;
-  /* content: ""; */
-  /* background: url("./assets/start.svg") no-repeat red; */
-  /* font-weight: 600;
-  font-family: inherit;
-  font-size: 16px;*/
   cursor: pointer;
   border-radius: 10px;
   border: none;
@@ -87,7 +79,6 @@ body {
   content: "";
   display: flex;
   align-items: center;
-  /* top: 25%; */
 }
 
 .button:active {
@@ -95,23 +86,24 @@ body {
 }
 
 .button:first-child {
-  /* content: ""; */
   background: url("./assets/start.svg") no-repeat transparent;
 }
 
 .button:nth-child(2) {
-  /* width: 50px;
-  height: 50px; */
   background: url("./assets/refresh.svg") no-repeat transparent;
-  /* top: 34%;
-  right: 20%; */
-  /* border: none;
-  outline: none; */
 }
 
-.button:last-child:not(:active) {
+.button:nth-child(3) {
+  background: url("./assets/timer.svg") no-repeat transparent;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:not(first-child):active {
   transform: rotate(180deg);
-  transition: 1s;
+  transition: 0.7s;
 }
 
 .textarea {
@@ -143,13 +135,17 @@ body {
 .clock {
   background: inherit;
   display: flex;
-  width: 120px;
+  width: 150px;
   height: 50px;
   border: 1px solid grey;
   border-radius: 5px;
   justify-content: center;
   align-items: center;
   font-weight: bold;
+}
+
+.clock:last-child {
+  width: 120px;
 }
 
 @media screen and (max-width: 500px) {
@@ -181,5 +177,8 @@ body {
   }
   .button:first-child {
     left: 0;
+  }
+  .button:nth-child(3) {
+    display: none;
   }
 }
